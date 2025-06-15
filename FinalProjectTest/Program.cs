@@ -101,6 +101,9 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        // Create database schema if it doesn't exist (for SQLite fallback)
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        db.Database.EnsureCreated();
         await SeedData.InitializeAsync(services);
     }
     catch (Exception ex)
