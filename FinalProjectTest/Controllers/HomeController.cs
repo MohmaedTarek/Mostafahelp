@@ -89,13 +89,19 @@ namespace FinalProjectTest.Controllers
             else
             {
                 // Fallback for guests
-                recommended = await _context.Locations
+                // First, fetch all relevant locations into memory
+                var allGuestLocations = await _context.Locations
                     .Include(l => l.Images)
                     .Where(l => l.Category != "Hotel" &&
                                 !topRated.Select(t => t.LocationID).Contains(l.LocationID))
-                    .OrderBy(r => Guid.NewGuid())
+                    .ToListAsync(); // Materialize the query
+
+                // Then, order randomly in memory
+                var random = new Random();
+                recommended = allGuestLocations
+                    .OrderBy(l => random.Next()) // Order by a new random number for each element
                     .Take(6)
-                    .ToListAsync();
+                    .ToList();
             }
 
             var categories = await _context.Locations
