@@ -1,0 +1,47 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+/* Home category tab styles */
+.nav-tabs .nav-link {
+    color: #6c757d;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+.nav-tabs .nav-link.active {
+        color: #b30059;
+        border-color: #b30059 #dee2e6 #fff;
+        font-weight: 600;
+}
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card-body p {
+    font-size: 0.9rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+

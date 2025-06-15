@@ -1,0 +1,95 @@
+﻿@model IEnumerable<FinalProjectTest.Models.Favorite>
+
+@{
+    ViewData["Title"] = "My Favorites";
+    string selectedSort = ViewBag.CurrentSort as string;
+}
+
+<h2 class="mb-4">❤️ My Favorite Places</h2>
+
+<!-- 🔽 Sort Dropdown -->
+<form method="get" asp-action="MyFavorites" class="mb-4">
+    <div class="row">
+        <div class="col-md-6">
+            <select name="sortOrder" class="form-select" onchange="this.form.submit()">
+                @if (string.IsNullOrEmpty(selectedSort))
+                {
+                    <option value="" selected>Sort by Name (A-Z)</option>
+                }
+                else
+                {
+                    <option value="">Sort by Name (A-Z)</option>
+                }
+
+                @if (selectedSort == "name_desc")
+                {
+                    <option value="name_desc" selected>Sort by Name (Z-A)</option>
+                }
+                else
+                {
+                    <option value="name_desc">Sort by Name (Z-A)</option>
+                }
+
+                @if (selectedSort == "category")
+                {
+                    <option value="category" selected>Sort by Category (A-Z)</option>
+                }
+                else
+                {
+                    <option value="category">Sort by Category (A-Z)</option>
+                }
+
+                @if (selectedSort == "category_desc")
+                {
+                    <option value="category_desc" selected>Sort by Category (Z-A)</option>
+                }
+                else
+                {
+                    <option value="category_desc">Sort by Category (Z-A)</option>
+                }
+            </select>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You haven’t saved any places yet!
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var fav in Model)
+        {
+            var location = fav.Location;
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="@location.ImageURL" class="card-img-top" alt="@location.Name" style="height: 200px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title">@location.Name</h5>
+                        <p class="card-text text-muted">@location.ShortDescription</p>
+                        <span class="badge bg-info text-dark">@location.Category</span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Address:</strong> @location.Address</li>
+                        <li class="list-group-item"><strong>Visiting Hours:</strong> @location.VisitingHours</li>
+                    </ul>
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <a href="@location.DetailURL" target="_blank" class="btn btn-sm btn-outline-primary">More Info</a>
+                            <a asp-controller="Locations" asp-action="Details" asp-route-id="@location.LocationID" class="btn btn-sm btn-outline-secondary">Details</a>
+                        </div>
+                        <form asp-action="Remove" asp-controller="Favorites" method="post" class="ms-2">
+                            <input type="hidden" name="locationId" value="@location.LocationID" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove from favorites">
+                                🗑️
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

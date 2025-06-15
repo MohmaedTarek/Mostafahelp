@@ -1,0 +1,78 @@
+﻿@model IEnumerable<FinalProjectTest.Models.Location>
+
+@{
+    ViewData["Title"] = "Explore Cairo";
+}
+
+<h2 class="mb-4">Explore Cairo</h2>
+
+<!-- 🔍 Search and Filter Form -->
+<form method="get" asp-action="Index" class="mb-4">
+    <div class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <input type="text" name="search" value="@ViewBag.CurrentSearch" class="form-control" placeholder="Search by name, description, or category" />
+        </div>
+
+        <div class="col-md-4">
+            <select name="category" class="form-select">
+                <option value="All">All Categories</option>
+                @foreach (var cat in ViewBag.Categories as List<string>)
+                {
+                    <option value="@cat" selected="@(cat == (ViewBag.CurrentCategory as string))">@cat</option>
+
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </div>
+</form>
+
+<!-- 📍 Location Cards -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    @foreach (var item in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                
+                <!-- 🖼️ Image: Show first gallery image or fallback -->
+                @if (item.Images != null && item.Images.Any())
+                {
+                    <img src="@item.Images.First().ImageURL" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;" />
+                }
+                else
+                {
+                    <img src="/images/no-image-available.png" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;" />
+                }
+
+                <div class="card-body">
+                    <h5 class="card-title">@item.Name</h5>
+                    <p class="card-text text-muted">@item.ShortDescription</p>
+                    <span class="badge bg-info text-dark">@item.Category</span>
+                </div>
+
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Address:</strong> @item.Address</li>
+                    <li class="list-group-item"><strong>Visiting Hours:</strong> @item.VisitingHours</li>
+                </ul>
+
+                <div class="card-body d-flex flex-wrap justify-content-between">
+                    <a href="@item.DetailURL" target="_blank" class="btn btn-sm btn-outline-primary mb-2">More Info</a>
+                    <a asp-action="Details" asp-route-id="@item.LocationID" class="btn btn-sm btn-outline-secondary mb-2">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.LocationID" class="btn btn-sm btn-outline-success mb-2">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.LocationID" class="btn btn-sm btn-outline-danger mb-2">Delete</a>
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning mt-4">
+        No locations found.
+    </div>
+}

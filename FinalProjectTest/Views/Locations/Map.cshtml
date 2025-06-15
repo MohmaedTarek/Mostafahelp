@@ -1,0 +1,48 @@
+﻿@model IEnumerable<FinalProjectTest.Models.Location>
+@{
+    ViewData["Title"] = "Map View";
+}
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<h2 class="mb-4">🗺️ Explore Cairo on the Map</h2>
+
+<div id="map" style="height: 600px; border-radius: 8px;"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+    // 🗺️ Initialize the map
+    const map = L.map('map').setView([30.033, 31.233], 11); // Cairo center
+
+    // 🌍 Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 📍 Marker data
+    const locations = [];
+
+    @foreach (var loc in Model)
+    {
+        if (loc.Latitude != null && loc.Longitude != null)
+        {
+            <text>
+                    locations.push({
+                        name: "@loc.Name".replace(/"/g, '&quot;'),
+                        lat: @loc.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        lng: @loc.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        url: "/Locations/Details/@loc.LocationID"
+                    });
+            </text>
+        }
+    }
+
+    // 📌 Add markers to map
+    locations.forEach(l => {
+        const marker = L.marker([l.lat, l.lng]).addTo(map);
+        marker.bindPopup(`<b>${l.name}</b><br><a href="${l.url}">View Details</a>`);
+    });
+</script>

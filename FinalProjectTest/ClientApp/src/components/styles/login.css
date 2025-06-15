@@ -1,0 +1,151 @@
+/* Simple Login Styles */
+.login-page {
+    background-color: white;
+    min-height: 100vh;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.login-header {
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 15px 40px;
+    display: flex;
+    align-items: center;
+}
+
+.login-logo {
+    height: 40px;
+}
+
+.login-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    flex: 1;
+}
+
+.login-form-container {
+    max-width: 450px;
+    width: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 30px;
+}
+
+.login-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.login-subtitle {
+    font-size: 16px;
+    color: #70757a;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.login-form-group {
+    margin-bottom: 20px;
+}
+
+.login-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.login-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    outline: none;
+    background-color: #f5f5f5;
+    color: #333;
+    box-sizing: border-box;
+}
+
+    .login-input:focus {
+        border-color: #1a73e8;
+        background-color: white;
+    }
+
+.login-input-error {
+    border-color: #dc3545;
+}
+
+.login-error {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+    text-align: center;
+    padding: 10px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.login-forgot {
+    text-align: right;
+    margin-bottom: 25px;
+}
+
+.login-forgot-link {
+    color: #1a73e8;
+    text-decoration: none;
+}
+
+    .login-forgot-link:hover {
+        text-decoration: underline;
+    }
+
+.login-submit {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+    .login-submit:hover:not(:disabled) {
+        background-color: #1765cc;
+    }
+
+    .login-submit:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+.login-register-link {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+}
+
+    .login-register-link a {
+        color: #1a73e8;
+        text-decoration: none;
+    }
+
+        .login-register-link a:hover {
+            text-decoration: underline;
+        }

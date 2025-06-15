@@ -1,0 +1,159 @@
+﻿@using FinalProjectTest.Models
+@model IEnumerable<Location>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/site.css" />
+}
+
+<header class="bg-white shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center py-2">
+        <a href="/" class="d-flex align-items-center text-decoration-none">
+            <img src="~/images/guidely_logo.png" alt="Guidely" height="40" />
+        </a>
+
+        <form method="get" asp-action="Index" class="d-flex align-items-center">
+            <input type="text" name="search" placeholder="Search in Cairo..." class="form-control me-2" />
+            <button class="btn btn-outline-primary">Search</button>
+        </form>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a href="/Preferences" class="btn btn-outline-secondary ms-3">
+                My Preferences
+            </a>
+        }
+         
+    </div>
+</header>
+
+<section class="hero-section text-white text-center py-5" style="background: linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.5)), url('/data/pyramids.jpeg') center/cover;">
+    <div class="container">
+        <span class="badge bg-secondary mb-2">AI-Powered</span>
+        <h1 class="display-5 fw-bold">Discover Cairo with AI Assistance</h1>
+        <p>Your personal guide to the best restaurants, hotels, cafes, and monuments in Cairo</p>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <a href="/Locations" class="btn btn-primary">Explore All</a>
+            <a href="/Locations/NearMe" class="btn btn-outline-light">Places Near Me 📍</a>
+            <a href="/AI/Chat" class="btn btn-outline-light">Ask AI Assistant</a>
+        </div>
+    </div>
+</section>
+
+<div class="container my-4">
+    <ul class="nav nav-tabs justify-content-center">
+        @{
+            var currentCategory = ViewBag.CurrentCategory as string ?? "All";
+            var categories = ViewBag.Categories as List<string> ?? new List<string>();
+        }
+
+        <li class="nav-item">
+            <a class="nav-link @(currentCategory == "All" ? "active" : "")"
+               href="@Url.Action("Index", "Home", new { category = "All" })">All</a>
+        </li>
+
+        @foreach (var cat in categories)
+        {
+            <li class="nav-item">
+                <a class="nav-link @(currentCategory == cat ? "active" : "")"
+                   href="@Url.Action("Index", "Home", new { category = cat })">@cat</a>
+            </li>
+        }
+    </ul>
+</div>
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">✨ Top-Rated Places in Cairo</h2>
+        <p class="text-muted">Discover the highest-rated destinations handpicked for you</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var place in Model)
+        {
+            var images = place.Images?.Cast<LocationImage>().ToList();
+            var imageUrl = images?.FirstOrDefault()?.ImageURL ?? "https://source.unsplash.com/300x200/?cairo";
+
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="position-relative">
+                        <img src="@imageUrl"
+                             class="card-img-top"
+                             alt="@place.Name"
+                             style="height: 200px; object-fit: cover;" />
+
+                        <span class="badge bg-primary position-absolute top-0 start-0 m-2">@place.Category</span>
+
+                        @if (!string.IsNullOrEmpty(place.Attributes))
+                        {
+                            <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">
+                                ⭐ @place.Attributes
+                            </span>
+                        }
+                    </div>
+
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title">@place.Name</h5>
+                        <p class="card-text text-muted">@place.Address</p>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <a asp-controller="Locations" asp-action="Details" asp-route-id="@place.LocationID"
+                               class="btn btn-outline-primary btn-sm w-100">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@{
+    var recommendedList = ViewBag.Recommended as List<Location>;
+}
+
+@if (recommendedList != null && recommendedList.Any())
+{
+    <div class="text-center mt-5 mb-4">
+        <h2 class="fw-bold">🎯 Recommended for You</h2>
+        <p class="text-muted">Places you may also enjoy</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var rec in recommendedList)
+        {
+            var recImages = rec.Images?.Cast<LocationImage>().ToList();
+            var recImageUrl = recImages?.FirstOrDefault()?.ImageURL ?? "https://source.unsplash.com/300x200/?cairo";
+
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="position-relative">
+                        <img src="@recImageUrl"
+                             class="card-img-top"
+                             alt="@rec.Name"
+                             style="height: 200px; object-fit: cover;" />
+
+                        <span class="badge bg-secondary position-absolute top-0 start-0 m-2">@rec.Category</span>
+
+                        @if (!string.IsNullOrEmpty(rec.Attributes))
+                        {
+                            <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">
+                                ⭐ @rec.Attributes
+                            </span>
+                        }
+                    </div>
+
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title">@rec.Name</h5>
+                        <p class="card-text text-muted">@rec.Address</p>
+
+                        <p class="text-success small">
+                            📌 Recommended because you’ve shown interest in @rec.Category
+                        </p>
+
+                        <a asp-controller="Locations" asp-action="Details" asp-route-id="@rec.LocationID"
+                           class="btn btn-outline-primary btn-sm mt-2 w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

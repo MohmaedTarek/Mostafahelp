@@ -1,0 +1,53 @@
+﻿services:
+  - type: web
+    name: GuidelyApp
+    runtime: node
+    repo: https://github.com/Amrkhaled18/GuidelyApp
+    buildCommand: |
+      # Initialize and update git submodules
+      git submodule init
+      git submodule update --recursive
+
+      # Install .NET 8 SDK
+      curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0
+      export PATH="$PATH:$HOME/.dotnet"
+
+      echo "=== Current directory: $(pwd) ==="
+      echo "=== Directory contents: ==="
+      ls -la
+
+      # Move into the project directory
+      cd FinalProjectTest
+
+      # Build in the project directory
+      if [ -f "FinalProjectTest.csproj" ]; then
+        echo "✅ Found FinalProjectTest.csproj"
+        
+        # Check if ClientApp exists and build React frontend
+        if [ -d "ClientApp" ]; then
+          echo "⚙️ Building React frontend"
+          cd ClientApp
+          npm install
+          npm run build
+          cd ..
+        else
+          echo "⚠️ ClientApp directory not found"
+        fi
+        
+        echo "🚀 Publishing .NET project"
+        ~/.dotnet/dotnet restore FinalProjectTest.csproj
+        ~/.dotnet/dotnet publish FinalProjectTest.csproj -c Release -o ./publish
+      else
+        echo "❌ FinalProjectTest.csproj not found!"
+        exit 1
+      fi
+
+    startCommand: cd FinalProjectTest/publish && ~/.dotnet/dotnet FinalProjectTest.dll
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:10000
+      - key: NODE_VERSION
+        value: "18"

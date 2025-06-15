@@ -1,0 +1,93 @@
+﻿@model FinalProjectTest.Models.Location
+
+@{
+    ViewData["Title"] = "Create Location";
+}
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h4>Create New Location</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Category" class="form-label"></label>
+                            <input asp-for="Category" class="form-control" />
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Attributes" class="form-label"></label>
+                            <input asp-for="Attributes" class="form-control" />
+                            <span asp-validation-for="Attributes" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ProximityScore" class="form-label"></label>
+                            <input asp-for="ProximityScore" class="form-control" />
+                            <span asp-validation-for="ProximityScore" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ImageURL" class="form-label"></label>
+                            <input asp-for="ImageURL" class="form-control" />
+                            <span asp-validation-for="ImageURL" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DetailURL" class="form-label"></label>
+                            <input asp-for="DetailURL" class="form-control" />
+                            <span asp-validation-for="DetailURL" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="VisitingHours" class="form-label"></label>
+                            <input asp-for="VisitingHours" class="form-control" />
+                            <span asp-validation-for="VisitingHours" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ShortDescription" class="form-label"></label>
+                            <textarea asp-for="ShortDescription" class="form-control" rows="2"></textarea>
+                            <span asp-validation-for="ShortDescription" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="FullDescription" class="form-label"></label>
+                            <textarea asp-for="FullDescription" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="FullDescription" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                            <button type="submit" class="btn btn-success">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

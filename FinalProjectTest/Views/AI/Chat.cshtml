@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Ask Guidely Assistant";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/chatbot.css" />
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">🤖 Guidely AI Assistant</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <div id="chat-window" class="mb-3" style="max-height: 400px; overflow-y: auto;">
+                <!-- Chat messages will appear here -->
+            </div>
+
+            <form id="chat-form" class="d-flex">
+                <input type="text" id="user-input" class="form-control me-2" placeholder="Ask something about Cairo..." />
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const chatWindow = document.getElementById('chat-window');
+        const input = document.getElementById('user-input');
+
+        chatForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const userText = input.value.trim();
+            if (!userText) return;
+
+            chatWindow.innerHTML += `<div class="text-end mb-2"><strong>You:</strong> ${userText}</div>`;
+            input.value = '';
+
+            const res = await fetch('/AI/Ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: userText }) // ✅ correct param name
+        });
+
+            const data = await res.json();
+            if (res.status === 429) {
+            chatWindow.innerHTML += `<div class="text-danger mb-2"><strong>Guidely:</strong> Too many requests. Please wait and try again shortly.</div>`;
+            return;
+        }
+
+            chatWindow.innerHTML += `<div class="mb-2"><strong>Guidely:</strong> ${data.response}</div>`;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        });
+    </script>
+}
