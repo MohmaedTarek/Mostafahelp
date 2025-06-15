@@ -6,12 +6,24 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services before building the app
+// Add database context with SQL Server if configured, otherwise fall back to SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrEmpty(connStr))
+    {
+        options.UseSqlServer(connStr);
+    }
+    else
+    {
+        var dbPath = Path.Combine(builder.Environment.ContentRootPath, "app.db");
+        options.UseSqlite($"Data Source={dbPath}");
+    }
+});
 
 // Configure Identity WITHOUT AddDefaultIdentity to avoid conflicts
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
