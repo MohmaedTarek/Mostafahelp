@@ -1,53 +1,57 @@
-﻿services:
+services:
   - type: web
-    name: GuidelyApp
-    runtime: node
-    repo: https://github.com/MohmaedTarek/Mostafahelp
+    name: GuidelyApp # You can rename this if you like
+    runtime: node # Using node runtime as the script installs .NET manually
+    repo: https://github.com/MohmaedTarek/Mostafahelp.git # Updated repository
+    branch: main
     buildCommand: |
-      # Initialize and update git submodules
-      git submodule init
-      git submodule update --recursive
+      set -e # Exit immediately if a command exits with a non-zero status
 
-      # Install .NET 8 SDK
+      echo "=== Installing .NET 8 SDK ==="
       curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0
       export PATH="$PATH:$HOME/.dotnet"
+      echo ".NET SDK installed. Version:"
+      dotnet --version
 
-      echo "=== Current directory: $(pwd) ==="
-      echo "=== Directory contents: ==="
-      ls -la
-
-      # Move into the project directory
+      echo "=== Navigating to project directory: FinalProjectTest ==="
       cd FinalProjectTest
 
-      # Build in the project directory
-      if [ -f "FinalProjectTest.csproj" ]; then
-        echo "✅ Found FinalProjectTest.csproj"
-        
-        # Check if ClientApp exists and build React frontend
-        if [ -d "ClientApp" ]; then
-          echo "⚙️ Building React frontend"
-          cd ClientApp
-          npm install
-          npm run build
-          cd ..
-        else
-          echo "⚠️ ClientApp directory not found"
-        fi
-        
-        echo "🚀 Publishing .NET project"
-        ~/.dotnet/dotnet restore FinalProjectTest.csproj
-        ~/.dotnet/dotnet publish FinalProjectTest.csproj -c Release -o ./publish
+      echo "=== Building React frontend in ClientApp ==="
+      if [ -d "ClientApp" ]; then
+        cd ClientApp
+        echo "Current directory: $(pwd)"
+        echo "Installing npm dependencies..."
+        npm install
+        echo "Building React app..."
+        npm run build
+        cd .. # Back to FinalProjectTest directory
+        echo "React frontend build complete. Current directory: $(pwd)"
       else
-        echo "❌ FinalProjectTest.csproj not found!"
-        exit 1
+        echo "⚠️ ClientApp directory not found, skipping frontend build."
       fi
 
-    startCommand: cd FinalProjectTest/publish && ~/.dotnet/dotnet FinalProjectTest.dll
+      echo "=== Publishing .NET project: FinalProjectTest.csproj ==="
+      echo "Current directory: $(pwd)"
+      echo "Restoring .NET project..."
+      ~/.dotnet/dotnet restore FinalProjectTest.csproj
+      echo "Publishing .NET project to ./publish..."
+      ~/.dotnet/dotnet publish FinalProjectTest.csproj -c Release -o ./publish
+
+      echo "=== Listing contents of publish directory (FinalProjectTest/publish) ==="
+      ls -Rla ./publish # For debugging output
+    startCommand: |
+      cd FinalProjectTest/publish && ~/.dotnet/dotnet FinalProjectTest.dll
     plan: free
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: ASPNETCORE_URLS
-        value: http://+:10000
+      - key: ASPNETCORE_URLS # Render typically injects a PORT variable. Your app should listen on this port.
+        value: http://+:10000 # Or use Render's PORT: e.g. http://+:$PORT
       - key: NODE_VERSION
-        value: "18"
+        value: "18" # Or "20", "22" - ensure this matches your ClientApp requirements
+      # Ensure OpenAIServiceOptions__ApiKey is set as a secret environment variable
+      # in your Render service settings dashboard. Do not hardcode the key here.
+      # Example of how it might be referenced if set in dashboard:
+      - key: OpenAIServiceOptions__ApiKey 
+        # value: "your_actual_key_set_in_render_dashboard" # This line is just a comment
+        # The actual value will be injected by Render if set in its UI.
