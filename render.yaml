@@ -2,7 +2,7 @@ services:
   - type: web
     name: GuidelyApp # You can rename this if you like
     runtime: node # Using node runtime as the script installs .NET manually
-    repo: https://github.com/MohmaedTarek/Mostafahelp # Updated repository
+    repo: https://github.com/MohmaedTarek/Mostafahelp.git # Updated repository
     branch: main
     # CRITICAL: Ensure Render is set to use this render.yaml file in your service settings!
     # Example path in Render UI: Settings -> Build & Deploy -> Configuration as Code -> Set to "Use render.yaml"
@@ -49,13 +49,13 @@ services:
       echo "--- buildCommand from render.yaml finished ---" # CHECK FOR THIS LINE
     startCommand: |
       echo "--- Executing startCommand from render.yaml ---" # CHECK FOR THIS LINE
-      cd FinalProjectTest/publish && dotnet FinalProjectTest.dll
+      dotnet ./FinalProjectTest/publish/FinalProjectTest.dll
     plan: free
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-      - key: ASPNETCORE_URLS # Render typically injects a PORT variable. Your app should listen on this port.
-        value: http://+:10000 # Or use Render's PORT: e.g. http://+:$PORT
+      - key: ASPNETCORE_URLS # Render injects PORT; bind to that
+        value: http://+:$PORT
       - key: NODE_VERSION
         value: "18" # Or "20", "22" - ensure this matches your ClientApp requirements
       # IMPORTANT: Your OpenAIServiceOptions__ApiKey MUST be set as a secret environment variable
