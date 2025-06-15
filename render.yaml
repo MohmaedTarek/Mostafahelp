@@ -48,8 +48,15 @@ services:
       ls -Rla ./publish
       echo "--- buildCommand from render.yaml finished ---" # CHECK FOR THIS LINE
     startCommand: |
-      echo "--- Executing startCommand from render.yaml ---" # CHECK FOR THIS LINE
-      dotnet ./FinalProjectTest/publish/FinalProjectTest.dll
+      echo "--- Executing startCommand from render.yaml ---"
+      echo "=== Installing .NET 8 runtime in start environment ==="
+      curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --runtime dotnet
+      export DOTNET_ROOT="$HOME/.dotnet"
+      export PATH="$DOTNET_ROOT:$PATH"
+      echo ".NET runtime installed. Version:"
+      dotnet --version
+      echo "=== Launching application ==="
+      dotnet FinalProjectTest/publish/FinalProjectTest.dll
     plan: free
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
