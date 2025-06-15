@@ -2,7 +2,7 @@
   - type: web
     name: GuidelyApp
     runtime: node
-    repo: https://github.com/Amrkhaled18/GuidelyApp
+    repo: https://github.com/MohmaedTarek/Mostafahelp
     buildCommand: |
       # Initialize and update git submodules
       git submodule init
