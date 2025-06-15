@@ -2,26 +2,33 @@ services:
   - type: web
     name: GuidelyApp # You can rename this if you like
     runtime: node # Using node runtime as the script installs .NET manually
-    repo: https://github.com/MohmaedTarek/Mostafahelp.git # Updated repository
+    repo: https://github.com/MohmaedTarek/Mostafahelp # Updated repository
     branch: main
+    # CRITICAL: Ensure Render is set to use this render.yaml file in your service settings!
+    # Example path in Render UI: Settings -> Build & Deploy -> Configuration as Code -> Set to "Use render.yaml"
     buildCommand: |
       set -e # Exit immediately if a command exits with a non-zero status
 
+      echo "--- Executing buildCommand from render.yaml ---" # CHECK FOR THIS LINE IN RENDER LOGS
+
       echo "=== Installing .NET 8 SDK ==="
       curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0
-      export PATH="$PATH:$HOME/.dotnet"
+      # Correctly add .dotnet to PATH for this build session
+      export DOTNET_ROOT="$HOME/.dotnet"
+      export PATH="$DOTNET_ROOT:$PATH"
       echo ".NET SDK installed. Version:"
       dotnet --version
 
       echo "=== Navigating to project directory: FinalProjectTest ==="
       cd FinalProjectTest
+      echo "Current directory: $(pwd)"
 
       echo "=== Building React frontend in ClientApp ==="
       if [ -d "ClientApp" ]; then
         cd ClientApp
         echo "Current directory: $(pwd)"
         echo "Installing npm dependencies..."
-        npm install
+        npm install --legacy-peer-deps # Added --legacy-peer-deps as a precaution
         echo "Building React app..."
         npm run build
         cd .. # Back to FinalProjectTest directory
@@ -33,14 +40,16 @@ services:
       echo "=== Publishing .NET project: FinalProjectTest.csproj ==="
       echo "Current directory: $(pwd)"
       echo "Restoring .NET project..."
-      ~/.dotnet/dotnet restore FinalProjectTest.csproj
+      dotnet restore FinalProjectTest.csproj
       echo "Publishing .NET project to ./publish..."
-      ~/.dotnet/dotnet publish FinalProjectTest.csproj -c Release -o ./publish
+      dotnet publish FinalProjectTest.csproj -c Release -o ./publish
 
-      echo "=== Listing contents of publish directory (FinalProjectTest/publish) ==="
-      ls -Rla ./publish # For debugging output
+      echo "=== Listing contents of publish directory (FinalProjectTest/publish) for verification ==="
+      ls -Rla ./publish
+      echo "--- buildCommand from render.yaml finished ---" # CHECK FOR THIS LINE
     startCommand: |
-      cd FinalProjectTest/publish && ~/.dotnet/dotnet FinalProjectTest.dll
+      echo "--- Executing startCommand from render.yaml ---" # CHECK FOR THIS LINE
+      cd FinalProjectTest/publish && dotnet FinalProjectTest.dll
     plan: free
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
@@ -49,9 +58,8 @@ services:
         value: http://+:10000 # Or use Render's PORT: e.g. http://+:$PORT
       - key: NODE_VERSION
         value: "18" # Or "20", "22" - ensure this matches your ClientApp requirements
-      # Ensure OpenAIServiceOptions__ApiKey is set as a secret environment variable
-      # in your Render service settings dashboard. Do not hardcode the key here.
-      # Example of how it might be referenced if set in dashboard:
-      - key: OpenAIServiceOptions__ApiKey 
-        # value: "your_actual_key_set_in_render_dashboard" # This line is just a comment
-        # The actual value will be injected by Render if set in its UI.
+      # IMPORTANT: Your OpenAIServiceOptions__ApiKey MUST be set as a secret environment variable
+      # in the Render dashboard for your service. Do not hardcode the actual key here.
+      # Example (the value is set in Render's UI, not here):
+      # - key: OpenAIServiceOptions__ApiKey 
+      #   value: from_render_dashboard_secret
