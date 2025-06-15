@@ -34,4 +34,10 @@
     <Folder Include="wwwroot\data\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="wwwroot\data\**\*.*">
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
