@@ -54,9 +54,14 @@ services:
       export DOTNET_ROOT="$HOME/.dotnet"
       export PATH="$DOTNET_ROOT:$PATH"
       echo ".NET runtime installed. Version:"
-      dotnet --version
+      # The dotnet --version check might fail here if SDK is not fully on PATH for this exact line, but runtime will be used by the app.
+      # If it causes issues, it can be removed or adjusted.
+      dotnet --version || echo "dotnet --version command failed, continuing with app launch."
+      echo "=== Navigating to application publish directory ==="
+      cd FinalProjectTest/publish
+      echo "Current directory for start command: $(pwd)"
       echo "=== Launching application ==="
-      dotnet FinalProjectTest/publish/FinalProjectTest.dll
+      dotnet FinalProjectTest.dll
     plan: free
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
