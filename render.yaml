@@ -50,7 +50,7 @@ services:
     startCommand: |
       echo "--- Executing startCommand from render.yaml ---"
       echo "=== Installing .NET 8 runtime in start environment ==="
-      curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --runtime aspnet
+      curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0 --runtime aspnetcore
       export DOTNET_ROOT="$HOME/.dotnet"
       export PATH="$DOTNET_ROOT:$PATH"
       echo ".NET runtime installed. Version:"
